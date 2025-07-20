@@ -1,6 +1,5 @@
 package com.devsync.contextgraphservice.dto.event;
 
-import com.devsync.analyzeservice.dto.event.ChangedFileDto;
 import lombok.Getter;
 import lombok.Setter;
 
