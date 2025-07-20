@@ -1,6 +1,7 @@
 package com.devsync.contextgraphservice.service.impl;
 
 import com.devsync.contextgraphservice.dto.event.PullRequestDto;
+import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.entity.CommitNode;
 import com.devsync.contextgraphservice.entity.IssueNode;
 import com.devsync.contextgraphservice.entity.PullRequestNode;
@@ -18,13 +19,13 @@ public class GraphServiceImpl implements GraphService {
         this.pullRequestRepository = pullRequestRepository;
     }
 
-    public PullRequestNode saveFromPR(PullRequestDto model) {
+    public PullRequestNode saveFromPR(PullRequestWithAnalysisDto model) {
         PullRequestNode pr = new PullRequestNode();
-        pr.setId(model.getId());
-        pr.setTitle(model.getTitle());
-        pr.setBranch(model.getBranch());
-        pr.setCommits(model.getCommits().stream().map(c -> new CommitNode(c.getSha(), c.getMessage())).toList());
-        pr.setSolves(model.getIssues().stream().map(i -> new IssueNode(generateRandomId() ,i.getSummary(), i.getKey())).toList());
+        pr.setId(model.getPullRequest().getId());
+        pr.setTitle(model.getPullRequest().getTitle());
+        pr.setBranch(model.getPullRequest().getBranch());
+        pr.setCommits(model.getPullRequest().getCommits().stream().map(c -> new CommitNode(c.getSha(), c.getMessage())).toList());
+        pr.setSolves(model.getPullRequest().getIssues().stream().map(i -> new IssueNode(generateRandomId() ,i.getSummary(), i.getKey())).toList());
         return pullRequestRepository.save(pr);
     }
 
