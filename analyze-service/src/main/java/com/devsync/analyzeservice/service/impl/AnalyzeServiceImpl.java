@@ -76,7 +76,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     }
 
     private void getAnalyzeFromAI(Analyze analyze, PullRequestDto model) throws JsonProcessingException {
-        String prompt = Prompts.AnalyzePrompt(objectMapper.writeValueAsString(model));
+        String prompt = Prompts.analyzePrompt(objectMapper.writeValueAsString(model));
         String answer = openAIService.send("gpt-3.5-turbo-instruct", prompt);
         AnalyzeAIDto responseFromAI = objectMapper.convertValue(answer, AnalyzeAIDto.class);
         analyze.setTechnicalComment(responseFromAI.getTechnicalComment());

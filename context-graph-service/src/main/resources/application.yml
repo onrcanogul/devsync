@@ -1,0 +1,8 @@
+spring:
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: password123
+  application:
+    name: context-graph-service

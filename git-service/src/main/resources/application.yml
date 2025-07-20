@@ -25,5 +25,9 @@ spring:
 
 
 github.token: ${GITHUB_TOKEN}
+jira:
+  base-url: ${JIRA_BASE_URL}
+  token: ${JIRA_API_TOKEN}
+  username: ${JIRA_USERNAME}
 server:
   port: 8081

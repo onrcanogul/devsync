@@ -1,4 +1,4 @@
-package com.devsync.gitservice.client.response;
+package com.devsync.gitservice.client.response.github;
 
 public class GitHubPullRequestResponse {
 

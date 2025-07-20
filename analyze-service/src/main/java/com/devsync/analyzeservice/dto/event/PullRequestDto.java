@@ -5,24 +5,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PullRequestDto implements Serializable {
-    public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.branch = branch;
-        this.commits = commits;
-        this.diff = diff;
-    }
-
-    public PullRequestDto() {
-
-    }
-
     private long id;
     private String title;
     private String author;
     private String branch;
     private List<CommitDto> commits;
+    private List<IssueDto> issues;
     private DiffDto diff;
 
     public static class Base {
@@ -48,4 +36,19 @@ public class PullRequestDto implements Serializable {
     public void setBranch(String branch) { this.branch = branch; }
     public void setCommits(List<CommitDto> commits) { this.commits = commits; }
     public void setDiff(DiffDto diff) { this.diff = diff; }
+    public List<IssueDto> getIssues() { return issues; }
+    public void setIssues(List<IssueDto> issues) { this.issues = issues; }
+
+    public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.branch = branch;
+        this.commits = commits;
+        this.diff = diff;
+    }
+
+    public PullRequestDto() {
+
+    }
 }

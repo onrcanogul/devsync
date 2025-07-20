@@ -1,13 +1,8 @@
-package com.devsync.gitservice.dto;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.devsync.contextgraphservice.dto.event;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Getter
-@Setter
 public class PullRequestDto implements Serializable {
     private long id;
     private String title;
@@ -16,15 +11,6 @@ public class PullRequestDto implements Serializable {
     private List<CommitDto> commits;
     private List<IssueDto> issues;
     private DiffDto diff;
-
-    public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.branch = branch;
-        this.commits = commits;
-        this.diff = diff;
-    }
 
     public static class Base {
         private Repo repo;
@@ -49,4 +35,19 @@ public class PullRequestDto implements Serializable {
     public void setBranch(String branch) { this.branch = branch; }
     public void setCommits(List<CommitDto> commits) { this.commits = commits; }
     public void setDiff(DiffDto diff) { this.diff = diff; }
+    public List<IssueDto> getIssues() { return issues; }
+    public void setIssues(List<IssueDto> issues) { this.issues = issues; }
+
+    public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.branch = branch;
+        this.commits = commits;
+        this.diff = diff;
+    }
+
+    public PullRequestDto() {
+
+    }
 }

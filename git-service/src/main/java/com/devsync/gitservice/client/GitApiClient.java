@@ -1,8 +1,8 @@
 package com.devsync.gitservice.client;
 
-import com.devsync.gitservice.client.response.GitHubChangedFileResponse;
-import com.devsync.gitservice.client.response.GitHubCommitResponse;
-import com.devsync.gitservice.client.response.GitHubPullRequestResponse;
+import com.devsync.gitservice.client.response.github.GitHubChangedFileResponse;
+import com.devsync.gitservice.client.response.github.GitHubCommitResponse;
+import com.devsync.gitservice.client.response.github.GitHubPullRequestResponse;
 import com.devsync.gitservice.dto.ChangedFileDto;
 import com.devsync.gitservice.dto.CommitDto;
 import com.devsync.gitservice.dto.DiffDto;
