@@ -12,7 +12,7 @@ import com.devsync.analyzeservice.mapper.AnalyzeMapper;
 import com.devsync.analyzeservice.repository.AnalyzeRepository;
 import com.devsync.analyzeservice.repository.OutboxRepository;
 import com.devsync.analyzeservice.service.AnalyzeService;
-import com.devsync.analyzeservice.service.OpenAIService;
+import com.devsync.analyzeservice.service.AIService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -21,20 +21,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class AnalyzeServiceImpl implements AnalyzeService {
-    private final OpenAIService openAIService;
+    private final AIService AIService;
     private final AnalyzeRepository repository;
     private final AnalyzeMapper analyzeMapper;
     private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
 
-    public AnalyzeServiceImpl(OpenAIService openAIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
-        this.openAIService = openAIService;
+    public AnalyzeServiceImpl(AIService AIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
+        this.AIService = AIService;
         this.repository = repository;
         this.analyzeMapper = analyzeMapper;
         this.objectMapper = objectMapper;
@@ -65,12 +68,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     @Transactional
     public AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException {
         Analyze analyze = new Analyze();
-        UUID analyzeId = UUID.randomUUID();
-        analyze.setId(analyzeId);
         fillAnalyze(analyze, model);
         getAnalyzeFromAI(analyze, model);
         Analyze createdAnalyze = repository.save(analyze);
-        outboxRepository.save(fillOutbox(new PullRequestWithAnalysisDto(model, analyze)));
+        outboxRepository.saveAndFlush(fillOutbox(new PullRequestWithAnalysisDto(model, analyze)));
         return analyzeMapper.toDto(createdAnalyze);
     }
     
@@ -98,10 +99,31 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     private void getAnalyzeFromAI(Analyze analyze, PullRequestDto model) throws JsonProcessingException {
         String prompt = Prompts.analyzePrompt(objectMapper.writeValueAsString(model));
-        String answer = openAIService.send("gpt-3.5-turbo-instruct", prompt);
-        AnalyzeAIDto responseFromAI = objectMapper.convertValue(answer, AnalyzeAIDto.class);
+        String answer = AIService.send("gpt-3.5-turbo-instruct", prompt);
+        AnalyzeAIDto responseFromAI = deserialize(answer.trim());
         analyze.setTechnicalComment(responseFromAI.getTechnicalComment());
         analyze.setFunctionalComment(responseFromAI.getFunctionalComment());
         analyze.setArchitecturalComment(responseFromAI.getArchitecturalComment());
+    }
+
+    public AnalyzeAIDto deserialize(String escapedJson) {
+        String rawJson = org.apache.commons.text.StringEscapeUtils.unescapeJava(escapedJson);
+        rawJson = extractJsonBlock(rawJson);
+        try {
+            return objectMapper.readValue(rawJson, AnalyzeAIDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException("JSON deserialization failed", e);
+        }
+    }
+
+    public static String extractJsonBlock(String fullResponse) {
+        Pattern pattern = Pattern.compile("\\{\\s*\"riskScore\".*?\\}", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(fullResponse);
+
+        if (matcher.find()) {
+            return matcher.group(0);
+        } else {
+            return null;
+        }
     }
 }

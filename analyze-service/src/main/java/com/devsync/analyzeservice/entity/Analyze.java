@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Entity
 @ToString
+@Table(name = "analysis")
 public class Analyze {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -27,7 +27,7 @@ public class GitServiceImpl implements GitService {
 
     public void handlePullRequest(String owner, String repo, String prId) throws JsonProcessingException {
         PullRequestDto dto = gitApiClient.fetchPullRequestWithCommitsAndDiffs(owner, repo, prId);
-        jiraService.enrichPullRequestWithJiraIssues(dto); // fill issues
+        // jiraService.enrichPullRequestWithJiraIssues(dto);
         Outbox outbox = new Outbox();
         fillOutbox(outbox, dto);
         outboxRepository.save(outbox);

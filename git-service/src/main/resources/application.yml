@@ -24,10 +24,10 @@ spring:
 
 
 
-github.token: ${GITHUB_TOKEN}
+github.token: asd
 jira:
-  base-url: ${JIRA_BASE_URL}
-  token: ${JIRA_API_TOKEN}
-  username: ${JIRA_USERNAME}
+  base-url: 123
+  token: 123
+  username: 123
 server:
   port: 8081

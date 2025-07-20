@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,7 +15,7 @@ public class PullRequestDto implements Serializable {
     private String author;
     private String branch;
     private List<CommitDto> commits;
-    private List<IssueDto> issues;
+    private List<IssueDto> issues = new ArrayList<>();
     private DiffDto diff;
 
     public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {

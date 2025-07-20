@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service
 public class OutboxPublisherServiceImpl implements OutboxPublisherService {
     private final KafkaProducerService eventPublisher;
@@ -29,13 +28,11 @@ public class OutboxPublisherServiceImpl implements OutboxPublisherService {
         outboxes.forEach(outbox -> {
             try {
                 eventPublisher.sendPullRequest(objectMapper.readValue(outbox.getPayload(), PullRequestWithAnalysisDto.class));
-                log.info("Event has been published");
                 outbox.setPublished(true);
                 outboxRepository.save(outbox);
-                log.info("Outbox has been published");
             }
             catch (Exception e) {
-                log.error("Error while publishing outbox events: {}", e.getMessage());
+                System.out.println(e);
             }
         });
     }

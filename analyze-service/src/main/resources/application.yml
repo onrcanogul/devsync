@@ -22,9 +22,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/analyze-db
     username: postgres
     password: postgres
-    jpa:
-      hibernate:
-        ddl-auto: update
-      show-sql: true
-
-openai.token: ${OPENAI_TOKEN}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+openrouter:
+  token: asd
+  base-url: asd
+  model: openai/gpt-3.5-turbo

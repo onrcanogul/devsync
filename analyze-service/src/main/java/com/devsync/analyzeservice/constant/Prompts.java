@@ -17,8 +17,15 @@ public class Prompts {
     
     Also, assign a `riskScore` between 0 and 100 (higher means riskier) based on the potential risk of merging this PR without additional review or testing.
     
-    Return your result as a plain, **non-escaped JSON string** (no backslashes or escaped characters) in the following format:
+    ⚠️ Return **only** the following JSON object and nothing else — do **not** wrap it in markdown, text, or explanations:
     
+    ```json
+    {
+      "riskScore": 0-100,
+      "technicalComment": "Your analysis here...",
+      "functionalComment": "Your analysis here...",
+      "architecturalComment": "Your analysis here..."
+    }
     ```json
     {
       "riskScore": 0-100,

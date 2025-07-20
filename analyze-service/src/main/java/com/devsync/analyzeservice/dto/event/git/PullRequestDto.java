@@ -2,6 +2,7 @@ package com.devsync.analyzeservice.dto.event.git;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PullRequestDto implements Serializable {
@@ -10,7 +11,7 @@ public class PullRequestDto implements Serializable {
     private String author;
     private String branch;
     private List<CommitDto> commits;
-    private List<IssueDto> issues;
+    private List<IssueDto> issues = new ArrayList<>();
     private DiffDto diff;
 
     public static class Base {
