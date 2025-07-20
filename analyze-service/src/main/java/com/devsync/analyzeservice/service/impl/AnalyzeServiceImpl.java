@@ -1,17 +1,21 @@
 package com.devsync.analyzeservice.service.impl;
 
 import com.devsync.analyzeservice.constant.Prompts;
-import com.devsync.analyzeservice.dto.event.ChangedFileDto;
-import com.devsync.analyzeservice.dto.event.PullRequestDto;
+import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.analyzeservice.dto.event.git.ChangedFileDto;
+import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeAIDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeDto;
 import com.devsync.analyzeservice.entity.Analyze;
+import com.devsync.analyzeservice.entity.Outbox;
 import com.devsync.analyzeservice.mapper.AnalyzeMapper;
 import com.devsync.analyzeservice.repository.AnalyzeRepository;
+import com.devsync.analyzeservice.repository.OutboxRepository;
 import com.devsync.analyzeservice.service.AnalyzeService;
 import com.devsync.analyzeservice.service.OpenAIService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +31,14 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private final AnalyzeRepository repository;
     private final AnalyzeMapper analyzeMapper;
     private final ObjectMapper objectMapper;
+    private final OutboxRepository outboxRepository;
 
-    public AnalyzeServiceImpl(OpenAIService openAIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper) {
+    public AnalyzeServiceImpl(OpenAIService openAIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
         this.openAIService = openAIService;
         this.repository = repository;
         this.analyzeMapper = analyzeMapper;
         this.objectMapper = objectMapper;
+        this.outboxRepository = outboxRepository;
     }
 
     public List<AnalyzeDto> get(int page, int size) {
@@ -56,12 +62,27 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         return analyzeMapper.toDto(analyze);
     }
 
+    @Transactional
     public AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException {
         Analyze analyze = new Analyze();
+        UUID analyzeId = UUID.randomUUID();
+        analyze.setId(analyzeId);
         fillAnalyze(analyze, model);
         getAnalyzeFromAI(analyze, model);
         Analyze createdAnalyze = repository.save(analyze);
+        outboxRepository.save(fillOutbox(new PullRequestWithAnalysisDto(model, analyze)));
         return analyzeMapper.toDto(createdAnalyze);
+    }
+    
+    private Outbox fillOutbox(PullRequestWithAnalysisDto model) throws JsonProcessingException {
+        Outbox outbox = new Outbox();
+        String analyzeObject = objectMapper.writeValueAsString(model);
+        outbox.setPayload(analyzeObject);
+        outbox.setPublished(false);
+        outbox.setAggregateType(Analyze.class.getTypeName());
+        outbox.setType(PullRequestWithAnalysisDto.class.getTypeName());
+        outbox.setAggregateId(model.getAnalyze().getId().toString());
+        return outbox;
     }
 
     private void fillAnalyze(Analyze analyze, PullRequestDto model) {

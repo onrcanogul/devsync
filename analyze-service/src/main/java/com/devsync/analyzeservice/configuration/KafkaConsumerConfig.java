@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.configuration;
 
-import com.devsync.analyzeservice.dto.event.PullRequestDto;
+import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;

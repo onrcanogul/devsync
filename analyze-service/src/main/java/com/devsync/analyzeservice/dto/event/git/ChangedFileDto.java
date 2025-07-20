@@ -1,7 +1,6 @@
-package com.devsync.analyzeservice.dto.event;
+package com.devsync.analyzeservice.dto.event.git;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

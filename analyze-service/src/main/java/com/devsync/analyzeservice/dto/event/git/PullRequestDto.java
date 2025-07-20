@@ -1,4 +1,4 @@
-package com.devsync.analyzeservice.dto.event;
+package com.devsync.analyzeservice.dto.event.git;
 
 
 import java.io.Serializable;

@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.service;
 
-import com.devsync.analyzeservice.dto.event.PullRequestDto;
+import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 

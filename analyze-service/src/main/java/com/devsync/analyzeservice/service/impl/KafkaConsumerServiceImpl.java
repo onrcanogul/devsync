@@ -1,16 +1,18 @@
 package com.devsync.analyzeservice.service.impl;
 
-import com.devsync.analyzeservice.dto.event.PullRequestDto;
+import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
+import com.devsync.analyzeservice.service.AnalyzeService;
+import com.devsync.analyzeservice.service.KafkaConsumerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class KafkaConsumerService {
+public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
-    private final AnalyzeServiceImpl analyzeService;
+    private final AnalyzeService analyzeService;
 
-    public KafkaConsumerService(AnalyzeServiceImpl analyzeService) {
+    public KafkaConsumerServiceImpl(AnalyzeServiceImpl analyzeService) {
         this.analyzeService = analyzeService;
     }
 
