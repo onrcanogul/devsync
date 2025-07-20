@@ -2,6 +2,7 @@ package com.devsync.analyzeservice.service;
 
 import com.devsync.analyzeservice.dto.event.PullRequestDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,5 +12,5 @@ public interface AnalyzeService {
     List<AnalyzeDto> getByRepository(String repoName);
     AnalyzeDto getById(UUID id);
     AnalyzeDto getByPullRequest(Long pullRequestId);
-    AnalyzeDto createAnalyze(PullRequestDto model);
+    AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException;
 }

@@ -24,7 +24,9 @@ public class AnalyzeDto {
     private int totalDeletions;
 
     private int riskScore;
-    private String generatedComment;
+    private String technicalComment;
+    private String functionalComment;
+    private String architecturalComment;
 
     private LocalDateTime analyzedAt;
 }

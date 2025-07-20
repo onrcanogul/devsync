@@ -1,8 +1,6 @@
 package com.devsync.analyzeservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
@@ -24,7 +22,11 @@ public class Analyze {
     private int totalDeletions;
     private int riskScore;
     @Column(columnDefinition = "text")
-    private String generatedComment;
+    private String technicalComment;
+    @Column(columnDefinition = "text")
+    private String functionalComment;
+    @Column(columnDefinition = "text")
+    private String architecturalComment;
     private LocalDateTime analyzedAt;
 
     public String getAuthor() {
@@ -67,12 +69,28 @@ public class Analyze {
         this.fileChangeCount = fileChangeCount;
     }
 
-    public String getGeneratedComment() {
-        return generatedComment;
+    public String getArchitecturalComment() {
+        return architecturalComment;
     }
 
-    public void setGeneratedComment(String generatedComment) {
-        this.generatedComment = generatedComment;
+    public void setArchitecturalComment(String architecturalComment) {
+        this.architecturalComment = architecturalComment;
+    }
+
+    public String getFunctionalComment() {
+        return functionalComment;
+    }
+
+    public void setFunctionalComment(String functionalComment) {
+        this.functionalComment = functionalComment;
+    }
+
+    public String getTechnicalComment() {
+        return technicalComment;
+    }
+
+    public void setTechnicalComment(String technicalComment) {
+        this.technicalComment = technicalComment;
     }
 
     public UUID getId() {

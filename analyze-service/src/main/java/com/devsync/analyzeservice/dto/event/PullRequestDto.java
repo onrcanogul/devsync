@@ -1,23 +1,10 @@
 package com.devsync.analyzeservice.dto.event;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
 public class PullRequestDto implements Serializable {
-    private long id;
-    private String title;
-    private String author;
-    private String branch;
-    private List<CommitDto> commits;
-    private DiffDto diff;
-
     public PullRequestDto(long id, String title, String author, String branch, List<CommitDto> commits, DiffDto diff) {
         this.id = id;
         this.title = title;
@@ -30,6 +17,13 @@ public class PullRequestDto implements Serializable {
     public PullRequestDto() {
 
     }
+
+    private long id;
+    private String title;
+    private String author;
+    private String branch;
+    private List<CommitDto> commits;
+    private DiffDto diff;
 
     public static class Base {
         private Repo repo;

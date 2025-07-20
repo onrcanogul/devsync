@@ -1,12 +1,17 @@
 package com.devsync.analyzeservice.service.impl;
 
+import com.devsync.analyzeservice.constant.Prompts;
+import com.devsync.analyzeservice.dto.event.ChangedFileDto;
 import com.devsync.analyzeservice.dto.event.PullRequestDto;
+import com.devsync.analyzeservice.dto.model.AnalyzeAIDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeDto;
 import com.devsync.analyzeservice.entity.Analyze;
 import com.devsync.analyzeservice.mapper.AnalyzeMapper;
 import com.devsync.analyzeservice.repository.AnalyzeRepository;
 import com.devsync.analyzeservice.service.AnalyzeService;
 import com.devsync.analyzeservice.service.OpenAIService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +26,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private final OpenAIService openAIService;
     private final AnalyzeRepository repository;
     private final AnalyzeMapper analyzeMapper;
+    private final ObjectMapper objectMapper;
 
-    public AnalyzeServiceImpl(OpenAIService openAIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper) {
+    public AnalyzeServiceImpl(OpenAIService openAIService, AnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper) {
         this.openAIService = openAIService;
         this.repository = repository;
         this.analyzeMapper = analyzeMapper;
+        this.objectMapper = objectMapper;
     }
 
     public List<AnalyzeDto> get(int page, int size) {
@@ -49,10 +56,10 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         return analyzeMapper.toDto(analyze);
     }
 
-    public AnalyzeDto createAnalyze(PullRequestDto model) {
+    public AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException {
         Analyze analyze = new Analyze();
         fillAnalyze(analyze, model);
-        getAnalyzeFromAI(model);
+        getAnalyzeFromAI(analyze, model);
         Analyze createdAnalyze = repository.save(analyze);
         return analyzeMapper.toDto(createdAnalyze);
     }
@@ -63,11 +70,17 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         analyze.setAnalyzedAt(LocalDateTime.now());
         analyze.setBranch(model.getBranch());
         analyze.setPullRequestId(model.getId());
-        analyze.setTotalAdditions(2);
-        analyze.setTotalDeletions(5);
+        analyze.setAuthor(model.getAuthor());
+        analyze.setTotalAdditions(model.getDiff().getChangedFiles().stream().mapToInt(ChangedFileDto::getAdditions).sum());
+        analyze.setTotalDeletions(model.getDiff().getChangedFiles().stream().mapToInt(ChangedFileDto::getDeletions).sum());
     }
 
-    private String getAnalyzeFromAI(PullRequestDto model) {
-        return openAIService.send("gpt-3.5-turbo-instruct", "hello");
+    private void getAnalyzeFromAI(Analyze analyze, PullRequestDto model) throws JsonProcessingException {
+        String prompt = Prompts.AnalyzePrompt(objectMapper.writeValueAsString(model));
+        String answer = openAIService.send("gpt-3.5-turbo-instruct", prompt);
+        AnalyzeAIDto responseFromAI = objectMapper.convertValue(answer, AnalyzeAIDto.class);
+        analyze.setTechnicalComment(responseFromAI.getTechnicalComment());
+        analyze.setFunctionalComment(responseFromAI.getFunctionalComment());
+        analyze.setArchitecturalComment(responseFromAI.getArchitecturalComment());
     }
 }
