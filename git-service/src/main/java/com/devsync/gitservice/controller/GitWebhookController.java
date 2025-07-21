@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/webhook")
+@RequestMapping("/api/git")
 public class GitWebhookController {
 
     private final GitServiceImpl gitService;

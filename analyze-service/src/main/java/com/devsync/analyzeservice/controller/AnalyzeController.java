@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/analyze")
+@RequestMapping("/api/analyze")
 public class AnalyzeController {
     private final AnalyzeService analyzeService;
 
