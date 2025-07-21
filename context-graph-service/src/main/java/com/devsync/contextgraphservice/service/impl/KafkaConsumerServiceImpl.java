@@ -15,6 +15,11 @@ public class KafkaConsumerServiceImpl {
         this.graphService = graphService;
     }
 
+    @KafkaListener(topics = "pull-request.DLQ", groupId = "dlq-group")
+    public void handleDlq(PullRequestWithAnalysisDto message) {
+        log.error("DLQ triggered: {}", message.toString());
+    }
+
     @KafkaListener(topics = "analyze-events", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
     public void listen(PullRequestWithAnalysisDto event) {
         log.info("Context Graph Consumer was triggered: {}", event.toString());
