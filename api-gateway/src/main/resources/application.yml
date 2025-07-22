@@ -27,13 +27,18 @@ spring:
                 - Path=/analyze/**
               filters:
                 - RewritePath=/analyze/(?<segment>.*), /api/analyze/${segment}
-
             - id: git-service
-              uri: http://localhost:8081
+              uri: lb://git-service
               predicates:
                 - Path=/git/**
               filters:
                 - RewritePath=/git/(?<segment>.*), /api/git/${segment}
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**
+              filters:
+                - RewritePath=/auth/(?<segment>.*), /api/auth/${segment}
 
 eureka:
   client:

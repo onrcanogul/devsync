@@ -1,7 +1,6 @@
 package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
-import com.devsync.gitservice.client.JiraClient;
 import com.devsync.gitservice.dto.PullRequestDto;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;

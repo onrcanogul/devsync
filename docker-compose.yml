@@ -49,6 +49,19 @@ services:
     networks:
       - example-net
 
+  user-db:
+    image: postgres:latest
+    container_name: user-db
+    restart: always
+    environment:
+      POSTGRES_DB: user-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
   neo4j:
     image: neo4j:5.18
     container_name: context-neo4j
@@ -63,6 +76,7 @@ services:
 volumes:
   analyze-db-data:
   git-db-data:
+  user-db-data:
 
 networks:
   example-net:
