@@ -4,12 +4,6 @@ server:
 spring:
   application:
     name: api-gateway
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
   cloud:
     gateway:
       server:
@@ -35,8 +29,15 @@ eureka:
                 - RewritePath=/analyze/(?<segment>.*), /api/analyze/${segment}
 
             - id: git-service
-              uri: lb://git-service
+              uri: http://localhost:8081
               predicates:
                 - Path=/git/**
               filters:
                 - RewritePath=/git/(?<segment>.*), /api/git/${segment}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
