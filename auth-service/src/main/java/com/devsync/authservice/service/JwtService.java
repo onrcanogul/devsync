@@ -13,10 +13,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 @Service
 public class JwtService {
-    @Value("${secret-key}")
-    private static String SECRET_KEY;
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();

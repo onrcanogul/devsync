@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,13 +42,9 @@ public class AuthService {
         Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails user = (UserDetails) auth.getPrincipal();
         String token = jwtService.generateToken(user);
-        String refreshToken = UUID.randomUUID().toString();
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setUser(userRepository.findByUsername(request.getUsername()).orElseThrow());
-        refreshTokenEntity.setToken(refreshToken);
-        refreshTokenEntity.setExpiration(LocalDateTime.now().plusDays(7));
-        refreshTokenRepository.save(refreshTokenEntity);
-        return new AuthResponse(token, refreshTokenEntity.getToken());
+        RefreshToken refreshToken = setRefreshToken(user.getUsername());
+        refreshTokenRepository.save(refreshToken);
+        return new AuthResponse(token, refreshToken.getToken());
     }
 
     public AuthResponse loginWithRefreshToken(String refreshToken) throws Exception {
@@ -70,8 +67,26 @@ public class AuthService {
         }
         User user = new User();
         user.setRoles(List.of("USER"));
+        user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
+    }
+
+
+    private RefreshToken setRefreshToken(String username) {
+        RefreshToken refreshTokenEntity;
+        String refreshToken = UUID.randomUUID().toString();
+        Optional<RefreshToken> userRefreshToken = refreshTokenRepository.findByUser_Username(username);
+        if (userRefreshToken.isPresent()) {
+            refreshTokenEntity = userRefreshToken.get();
+        }
+        else {
+            refreshTokenEntity = new RefreshToken();
+            refreshTokenEntity.setUser(userRepository.findByUsername(username).orElseThrow());
+        }
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenEntity.setExpiration(LocalDateTime.now().plusDays(7));
+        return refreshTokenEntity;
     }
 }
