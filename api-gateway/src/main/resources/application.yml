@@ -2,6 +2,16 @@ server:
   port: 8000
 
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
   application:
     name: api-gateway
   cloud:
@@ -27,18 +37,33 @@ spring:
                 - Path=/analyze/**
               filters:
                 - RewritePath=/analyze/(?<segment>.*), /api/analyze/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@ipKeyResolver}"
             - id: git-service
               uri: lb://git-service
               predicates:
                 - Path=/git/**
               filters:
                 - RewritePath=/git/(?<segment>.*), /api/git/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@ipKeyResolver}"
             - id: auth-service
               uri: lb://auth-service
               predicates:
                 - Path=/auth/**
               filters:
                 - RewritePath=/auth/(?<segment>.*), /api/auth/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 3
+                    redis-rate-limiter.burstCapacity: 5
+                    key-resolver: "#{@ipKeyResolver}"
 
 eureka:
   client:
