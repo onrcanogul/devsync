@@ -40,13 +40,6 @@ public class JwtServiceImpl implements JwtService {
                 !isTokenExpired(token);
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
         Object roles = claims.get("roles");
@@ -57,6 +50,13 @@ public class JwtServiceImpl implements JwtService {
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private boolean isTokenExpired(String token) {
