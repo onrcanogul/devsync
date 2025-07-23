@@ -80,6 +80,19 @@ services:
     volumes:
       - ./data:/data
 
+  analyze-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"   # HTTP port
+      - "5005:5005"   # Debug port
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ~/.m2:/root/.m2
+    restart: unless-stopped
+
 volumes:
   analyze-db-data:
   git-db-data:
