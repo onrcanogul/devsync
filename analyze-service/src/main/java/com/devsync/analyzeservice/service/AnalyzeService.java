@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface AnalyzeService {
     List<AnalyzeDto> get(int page, int size);
-    List<AnalyzeDto> getByRepository(String repoName);
+    List<AnalyzeDto> getByRepository(Long repoId);
     AnalyzeDto getById(UUID id);
     AnalyzeDto getByPullRequest(Long pullRequestId);
     AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException;

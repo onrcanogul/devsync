@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor @AllArgsConstructor
 public class PullRequestWithAnalysisDto {
     private PullRequestDto pullRequest;
-    private AnalyzeDto analyze;
+    private PullRequestAnalyzeDto analyze;
 }

@@ -3,11 +3,11 @@ package com.devsync.gitservice.client;
 import com.devsync.gitservice.client.response.github.GitHubChangedFileResponse;
 import com.devsync.gitservice.client.response.github.GitHubCommitResponse;
 import com.devsync.gitservice.client.response.github.GitHubPullRequestResponse;
+import com.devsync.gitservice.configuration.GitHubProperties;
 import com.devsync.gitservice.dto.ChangedFileDto;
 import com.devsync.gitservice.dto.CommitDto;
 import com.devsync.gitservice.dto.DiffDto;
 import com.devsync.gitservice.dto.PullRequestDto;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,10 +19,10 @@ public class GitApiClient {
 
     private final WebClient webClient;
 
-    public GitApiClient(WebClient.Builder builder, @Value("${github.token}") String token) {
+    public GitApiClient(WebClient.Builder builder, GitHubProperties properties) {
         this.webClient = builder
                 .baseUrl("https://api.github.com")
-                .defaultHeader("Authorization", "Bearer " + token)
+                .defaultHeader("Authorization", "Bearer " + properties.getToken())
                 .defaultHeader("Accept", "application/vnd.github+json")
                 .build();
     }
@@ -62,7 +62,9 @@ public class GitApiClient {
                 prResponse.getUser().getLogin(),
                 prResponse.getHead().getRef(),
                 commitDtos,
-                new DiffDto(fileDtos)
+                new DiffDto(fileDtos),
+                prResponse.getRepo(),
+                prResponse.getBase()
         );
     }
 }

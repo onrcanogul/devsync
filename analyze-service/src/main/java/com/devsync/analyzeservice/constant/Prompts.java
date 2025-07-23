@@ -5,34 +5,49 @@ public class Prompts {
         return """
     You are a senior software architect and code reviewer.
     
-    Given the following Pull Request data (as a JSON object), **including related Jira issues**, perform a detailed analysis of the changes from three distinct perspectives:
+    You are given a Pull Request JSON object, which includes a list of commits and associated Jira issues.
     
-    1. **Technical Quality**: Evaluate code readability, maintainability, naming conventions, performance, testability, and adherence to best practices.
+    Please perform a **two-level analysis**:
     
-    2. **Functional Impact**: Assess whether the code effectively solves the intended business or user problem. Evaluate how well the implementation aligns with the related Jira issues and requirements. Identify any logic errors or inconsistencies.
+    1. **Pull Request Level Analysis**: \s
+       - Technical Quality \s
+       - Functional Impact \s
+       - Architectural Impact \s
+       - Assign an overall `riskScore` between 0-100
     
-    3. **Architectural Impact**: Determine whether the changes align with the overall system architecture. Consider modularity, scalability, cross-cutting concerns, coupling/cohesion, and impact on existing components.
+    2. **Commit Level Analysis**: \s
+       For each commit, provide: \s
+       - A short comment describing the commit’s intent and quality \s
+       - A `commitRiskScore` (0-100)
     
-    Use the `issues` section in the JSON to understand the purpose, requirements, or tasks associated with this pull request. They will help you contextualize the changes.
+    ---
     
-    Also, assign a `riskScore` between 0 and 100 (higher means riskier) based on the potential risk of merging this PR without additional review or testing.
+    ⚠️ Return **only** the following JSON structure and nothing else — no markdown, no preamble, no extra fields in json:
     
-    ⚠️ Return **only** the following JSON object and nothing else — do **not** wrap it in markdown, text, or explanations:
-    
+    Just give me the content of json like that, do not give anything else :
     ```json
     {
-      "riskScore": 0-100,
-      "technicalComment": "Your analysis here...",
-      "functionalComment": "Your analysis here...",
-      "architecturalComment": "Your analysis here..."
+      "pullRequestAnalysis": {
+        "riskScore": 0-100,
+        "technicalComment": "Your PR-level technical analysis...",
+        "functionalComment": "Your PR-level functional analysis...",
+        "architecturalComment": "Your PR-level architectural analysis..."
+      },
+      "commitAnalyses": [
+        {
+          "hash": "commit hash here",
+          "message": "commit message here",
+          "technicalComment": "Your PR-level technical analysis...",
+          "functionalComment": "Your PR-level functional analysis...",
+          "architecturalComment": "Your PR-level architectural analysis..."
+          "commitRiskScore": 0-100
+        },
+        ...
+      ]
     }
-    ```json
-    {
-      "riskScore": 0-100,
-      "technicalComment": "Your analysis here...",
-      "functionalComment": "Your analysis here...",
-      "architecturalComment": "Your analysis here..."
-    }
+    
+   Analyze the pull request. Respond **only** with a raw JSON object containing the fields `pullRequestAnalysis` and `commitAnalyses`. Do not include any explanation, text, or additional formatting. Just return the JSON.
+               
     Pull Request:
     """ + serializedObject;
     }

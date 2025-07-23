@@ -64,6 +64,17 @@ spring:
                     redis-rate-limiter.replenishRate: 3
                     redis-rate-limiter.burstCapacity: 5
                     key-resolver: "#{@ipKeyResolver}"
+            - id: context-graph-service
+              uri: lb://context-graph-service
+              predicates:
+                - Path=/context-graph/**
+              filters:
+                - RewritePath=/context-graph/(?<segment>.*), /api/context-graph/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 3
+                    redis-rate-limiter.burstCapacity: 5
+                    key-resolver: "#{@ipKeyResolver}"
 
 eureka:
   client:

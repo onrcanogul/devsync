@@ -16,6 +16,8 @@ import java.util.List;
 public class PullRequestNode {
     @Id
     private Long id;
+    private Long repoId;
+    private String repoName;
     private String title;
     private String branch;
 
@@ -24,4 +26,7 @@ public class PullRequestNode {
 
     @Relationship(type = "HAS_COMMIT", direction = Relationship.Direction.OUTGOING)
     private List<CommitNode> commits;
+
+    @Relationship(type = "HAS_ANALYSIS", direction = Relationship.Direction.OUTGOING)
+    private PullRequestAnalysisNode analysis;
 }

@@ -25,9 +25,9 @@ public class AnalyzeController {
         return ResponseEntity.ok(analyzeService.get(page, size));
     }
 
-    @GetMapping("/repository/{repoName}")
-    public ResponseEntity<List<AnalyzeDto>> get(@PathVariable String repoName) {
-        return ResponseEntity.ok(analyzeService.getByRepository(repoName));
+    @GetMapping("/repository/{repoId}")
+    public ResponseEntity<List<AnalyzeDto>> getByRepo(@PathVariable Long repoId) {
+        return ResponseEntity.ok(analyzeService.getByRepository(repoId));
     }
 
     @GetMapping("/{id}")

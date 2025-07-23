@@ -2,13 +2,14 @@ package com.devsync.contextgraphservice.service.impl;
 
 import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.service.GraphService;
+import com.devsync.contextgraphservice.service.KafkaConsumerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class KafkaConsumerServiceImpl {
+public class KafkaConsumerServiceImpl implements KafkaConsumerService {
     private final GraphService graphService;
 
     public KafkaConsumerServiceImpl(GraphService graphService) {

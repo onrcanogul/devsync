@@ -31,6 +31,6 @@ spring:
       ddl-auto: update
     show-sql: true
 openrouter:
-  token: asd
-  base-url: asd
-  model: openai/gpt-3.5-turbo
+  token: ${SECONDARY_TOKEN}
+  base-url: ${OPENAI_BASE_URL}
+  model: ${OPENAI_MODEL}

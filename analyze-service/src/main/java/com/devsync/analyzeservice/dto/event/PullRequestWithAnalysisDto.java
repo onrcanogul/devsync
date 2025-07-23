@@ -1,31 +1,23 @@
 package com.devsync.analyzeservice.dto.event;
 
 import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
-import com.devsync.analyzeservice.entity.Analyze;
+
+import com.devsync.analyzeservice.dto.model.PullRequestAnalyzeDto;
+import com.devsync.analyzeservice.entity.PullRequestAnalyze;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 
-public class PullRequestWithAnalysisDto {
+@Setter
+@Getter
+public class PullRequestWithAnalysisDto implements Serializable {
     private PullRequestDto pullRequest;
-    private Analyze analyze;
+    private PullRequestAnalyze analyze;
 
 
-    public Analyze getAnalyze() {
-        return analyze;
-    }
-
-    public void setAnalyze(Analyze analyze) {
-        this.analyze = analyze;
-    }
-
-    public PullRequestDto getPullRequest() {
-        return pullRequest;
-    }
-
-    public void setPullRequest(PullRequestDto pullRequest) {
-        this.pullRequest = pullRequest;
-    }
-
-    public PullRequestWithAnalysisDto(PullRequestDto pr, Analyze analyze) {
+    public PullRequestWithAnalysisDto(PullRequestDto pr, PullRequestAnalyze analyze) {
         this.analyze = analyze;
         this.pullRequest = pr;
     }
