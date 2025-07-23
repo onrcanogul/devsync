@@ -1,5 +1,7 @@
 package com.devsync.authservice.service.impl;
 
+import com.devsync.authservice.exception.BadRequestException;
+import com.devsync.authservice.exception.NotFoundException;
 import com.devsync.authservice.model.dto.LoginDto;
 import com.devsync.authservice.model.dto.RegisterDto;
 import com.devsync.authservice.model.entity.RefreshToken;
@@ -10,7 +12,6 @@ import com.devsync.authservice.repository.UserRepository;
 import com.devsync.authservice.service.AuthService;
 import com.devsync.authservice.service.CustomUserDetailsService;
 import com.devsync.authservice.service.JwtService;
-import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,11 +51,11 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(token, refreshToken.getToken());
     }
 
-    public AuthResponse loginWithRefreshToken(String refreshToken) throws Exception {
-        RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken).orElseThrow(
-                Exception::new);
+    public AuthResponse loginWithRefreshToken(String refreshToken){
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new NotFoundException("localize(notFound.refreshTokenNotFound)"));
         if (refreshTokenEntity.getExpiration().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("RefreshTokenExpired");
+            throw new BadRequestException("localize(badRequest.badRequestException)");
         }
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(refreshTokenEntity.getUser().getUsername());
         String accessToken = jwtService.generateToken(userDetails);
@@ -64,9 +65,9 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(accessToken, updatedRefreshToken.getToken());
     }
 
-    public void register(RegisterDto request) throws BadRequestException {
+    public void register(RegisterDto request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new BadRequestException("Username already taken.");
+            throw new BadRequestException("localize(badRequest.usernameAlreadyTaken)");
         }
         User user = new User();
         user.setRoles(List.of("USER"));

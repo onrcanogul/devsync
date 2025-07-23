@@ -7,6 +7,6 @@ import org.apache.coyote.BadRequestException;
 
 public interface AuthService {
     AuthResponse login(LoginDto request);
-    AuthResponse loginWithRefreshToken(String refreshToken) throws Exception;
-    void register(RegisterDto request) throws BadRequestException;
+    AuthResponse loginWithRefreshToken(String refreshToken);
+    void register(RegisterDto request);
 }

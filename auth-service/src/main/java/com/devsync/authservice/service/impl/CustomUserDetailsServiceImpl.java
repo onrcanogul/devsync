@@ -30,7 +30,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with username: " + username));
+                        new UsernameNotFoundException("localize(notFound.usernameNotFound)"));
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))

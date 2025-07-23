@@ -24,12 +24,12 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token-login/{refreshToken}")
-    public ResponseEntity<AuthResponse> login(@PathVariable String refreshToken) throws Exception {
+    public ResponseEntity<AuthResponse> login(@PathVariable String refreshToken) {
         return ResponseEntity.ok(authService.loginWithRefreshToken(refreshToken));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterDto model) throws BadRequestException {
+    public ResponseEntity<Void> register(@RequestBody RegisterDto model) {
         authService.register(model);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
