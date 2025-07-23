@@ -11,6 +11,7 @@ import com.devsync.analyzeservice.entity.Analyze;
 import com.devsync.analyzeservice.entity.CommitAnalyze;
 import com.devsync.analyzeservice.entity.Outbox;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;
+import com.devsync.analyzeservice.factory.OutboxFactory;
 import com.devsync.analyzeservice.mapper.AnalyzeMapper;
 import com.devsync.analyzeservice.mapper.PullRequestAnalyzeMapper;
 import com.devsync.analyzeservice.repository.OutboxRepository;
@@ -41,13 +42,15 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     private final AnalyzeMapper analyzeMapper;
     private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
+    private final OutboxFactory outboxFactory;
 
-    public AnalyzeServiceImpl(AIService AIService, PullRequestAnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
+    public AnalyzeServiceImpl(AIService AIService, PullRequestAnalyzeRepository repository, AnalyzeMapper analyzeMapper, ObjectMapper objectMapper, OutboxRepository outboxRepository, OutboxFactory outboxFactory) {
         this.AIService = AIService;
         this.repository = repository;
         this.analyzeMapper = analyzeMapper;
         this.objectMapper = objectMapper;
         this.outboxRepository = outboxRepository;
+        this.outboxFactory = outboxFactory;
     }
 
     public List<AnalyzeDto> get(int page, int size) {
@@ -77,19 +80,8 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         fillAnalyze(analyze, model);
         getAnalyzeFromAI(analyze, model);
         PullRequestAnalyze createdAnalyze = repository.save(analyze);
-        outboxRepository.save(fillOutbox(new PullRequestWithAnalysisDto(model, createdAnalyze)));
+        outboxRepository.save(outboxFactory.create(new PullRequestWithAnalysisDto(model, createdAnalyze), PullRequestAnalyze.class, PullRequestWithAnalysisDto.class, createdAnalyze.getId().toString()));
         return analyzeMapper.toDto(createdAnalyze);
-    }
-    
-    private Outbox fillOutbox(PullRequestWithAnalysisDto model) throws JsonProcessingException {
-        Outbox outbox = new Outbox();
-        String analyzeObject = objectMapper.writeValueAsString(model);
-        outbox.setPayload(analyzeObject);
-        outbox.setPublished(false);
-        outbox.setAggregateType(Analyze.class.getTypeName());
-        outbox.setType(PullRequestWithAnalysisDto.class.getTypeName());
-        outbox.setAggregateId(String.valueOf(model.getPullRequest().getId()));
-        return outbox;
     }
 
     private void fillAnalyze(PullRequestAnalyze analyze, PullRequestDto model) {
