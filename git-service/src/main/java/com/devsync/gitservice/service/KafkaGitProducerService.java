@@ -1,7 +1,8 @@
 package com.devsync.gitservice.service;
 
-import com.devsync.gitservice.dto.PullRequestDto;
+
+import com.devsync.gitservice.dto.model.GithubWebhookModel;
 
 public interface KafkaGitProducerService {
-    void sendPullRequest(PullRequestDto model);
+    void sendPullRequest(GithubWebhookModel model);
 }

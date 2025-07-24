@@ -1,8 +1,8 @@
 package com.devsync.analyzeservice.service.impl;
 
 import com.devsync.analyzeservice.constant.Prompts;
-import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
 import com.devsync.analyzeservice.dto.model.ai.AnalyzeAIDto;
+import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.service.AIService;
 import com.devsync.analyzeservice.service.PullRequestAnalyzerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,7 +24,7 @@ public class PullRequestAnalyzerServiceServiceImpl implements PullRequestAnalyze
         this.aiService = aiService;
     }
 
-    public AnalyzeAIDto analyze(PullRequestDto model) throws JsonProcessingException {
+    public AnalyzeAIDto analyze(GithubWebhookModel model) throws JsonProcessingException {
         String prompt = Prompts.analyzePrompt(objectMapper.writeValueAsString(model));
         String answer = aiService.send("gpt-3.5-turbo-instruct", prompt);
         return deserialize(answer);

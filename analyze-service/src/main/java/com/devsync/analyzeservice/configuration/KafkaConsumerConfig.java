@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.configuration;
 
-import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
+import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -19,8 +19,8 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Bean
-    public ConsumerFactory<String, PullRequestDto> consumerFactory() {
-        JsonDeserializer<PullRequestDto> deserializer = new JsonDeserializer<>(PullRequestDto.class);
+    public ConsumerFactory<String, GithubWebhookModel> consumerFactory() {
+        JsonDeserializer<GithubWebhookModel> deserializer = new JsonDeserializer<>(GithubWebhookModel.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
         deserializer.setUseTypeMapperForKey(true);
@@ -38,11 +38,11 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PullRequestDto> kafkaListenerContainerFactory(
-            ConsumerFactory<String, PullRequestDto> consumerFactory,
+    public ConcurrentKafkaListenerContainerFactory<String, GithubWebhookModel> kafkaListenerContainerFactory(
+            ConsumerFactory<String, GithubWebhookModel> consumerFactory,
             DefaultErrorHandler errorHandler
     ) {
-        ConcurrentKafkaListenerContainerFactory<String, PullRequestDto> factory =
+        ConcurrentKafkaListenerContainerFactory<String, GithubWebhookModel> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
@@ -51,7 +51,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public DefaultErrorHandler errorHandler(KafkaTemplate<String, PullRequestDto> kafkaTemplate) {
+    public DefaultErrorHandler errorHandler(KafkaTemplate<String, GithubWebhookModel> kafkaTemplate) {
         FixedBackOff backOff = new FixedBackOff(2000L, 2);
 
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(
