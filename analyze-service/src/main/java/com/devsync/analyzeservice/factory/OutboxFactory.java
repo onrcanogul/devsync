@@ -1,7 +1,5 @@
 package com.devsync.analyzeservice.factory;
 
-import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
-import com.devsync.analyzeservice.entity.Analyze;
 import com.devsync.analyzeservice.entity.Outbox;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

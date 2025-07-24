@@ -80,18 +80,15 @@ services:
     volumes:
       - ./data:/data
 
-  analyze-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"   # HTTP port
-      - "5005:5005"   # Debug port
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    volumes:
-      - ~/.m2:/root/.m2
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: devsync-ngrok
     restart: unless-stopped
+    command: http host.docker.internal:8081
+    environment:
+      - NGROK_AUTHTOKEN=30KZ1bnU9Blevf7lcCVtmpxKl6k_E7CnY6YZBmPaMDVTow19
+    ports:
+      - "4040:4040"
 
 volumes:
   analyze-db-data:

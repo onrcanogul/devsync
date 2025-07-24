@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 public class ChangedFileDto {
     private String filename;
@@ -20,13 +20,4 @@ public class ChangedFileDto {
         this.deletions = deletions;
     }
 
-    public String getFilename() { return filename; }
-    public String getStatus() { return status; }
-    public int getAdditions() { return additions; }
-    public int getDeletions() { return deletions; }
-
-    public void setFilename(String filename) { this.filename = filename; }
-    public void setStatus(String status) { this.status = status; }
-    public void setAdditions(int additions) { this.additions = additions; }
-    public void setDeletions(int deletions) { this.deletions = deletions; }
 }

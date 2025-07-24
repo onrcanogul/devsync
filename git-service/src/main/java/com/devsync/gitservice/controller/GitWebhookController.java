@@ -17,7 +17,7 @@ public class GitWebhookController {
         this.gitService = gitService;
     }
 
-    @PostMapping("/pull-request")
+    @PostMapping("/webhook/pull-request")
     public ResponseEntity<Void> handleWebhook(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
         String prId = String.valueOf(payload.get("number"));
 
