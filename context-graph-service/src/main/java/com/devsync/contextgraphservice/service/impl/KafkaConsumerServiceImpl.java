@@ -1,7 +1,7 @@
 package com.devsync.contextgraphservice.service.impl;
 
 import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
-import com.devsync.contextgraphservice.service.GraphService;
+import com.devsync.contextgraphservice.service.PullRequestNodeService;
 import com.devsync.contextgraphservice.service.KafkaConsumerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class KafkaConsumerServiceImpl implements KafkaConsumerService {
-    private final GraphService graphService;
+    private final PullRequestNodeService pullRequestNodeService;
 
-    public KafkaConsumerServiceImpl(GraphService graphService) {
-        this.graphService = graphService;
+    public KafkaConsumerServiceImpl(PullRequestNodeService pullRequestNodeService) {
+        this.pullRequestNodeService = pullRequestNodeService;
     }
 
     @KafkaListener(topics = "pull-request.DLQ", groupId = "dlq-group")
@@ -24,6 +24,6 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
     @KafkaListener(topics = "analyze-events", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
     public void listen(PullRequestWithAnalysisDto event) {
         log.info("Context Graph Consumer was triggered: {}", event.toString());
-        graphService.saveFromPR(event);
+        pullRequestNodeService.saveFromPR(event);
     }
 }

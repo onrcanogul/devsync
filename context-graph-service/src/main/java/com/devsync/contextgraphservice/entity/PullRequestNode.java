@@ -16,12 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PullRequestNode {
-
     @Id
     private Long id;
-
-    private Long repoId;
-    private String repoName;
     private String branch;
     private String pusher;
     private String headCommitMessage;
@@ -37,8 +33,11 @@ public class PullRequestNode {
     @Relationship(type = "CREATED_BY", direction = Relationship.Direction.OUTGOING)
     private UserNode createdBy;
 
-    // Optional: If you derive issue links later from commit messages
     @Relationship(type = "SOLVES", direction = Relationship.Direction.OUTGOING)
     private List<IssueNode> solves;
+
+    @Relationship(type = "IN_REPOSITORY", direction = Relationship.Direction.OUTGOING)
+    private RepositoryNode repository;
 }
+
 
