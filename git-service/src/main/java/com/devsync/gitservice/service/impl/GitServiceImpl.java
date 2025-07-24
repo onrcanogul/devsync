@@ -2,6 +2,7 @@ package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
 import com.devsync.gitservice.dto.PullRequestDto;
+import com.devsync.gitservice.dto.model.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.GitService;
@@ -9,6 +10,8 @@ import com.devsync.gitservice.service.JiraService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class GitServiceImpl implements GitService {
@@ -24,19 +27,19 @@ public class GitServiceImpl implements GitService {
         this.outboxRepository = outboxRepository;
     }
 
-    public void handlePullRequest(String owner, String repo, String prId) throws JsonProcessingException {
-        PullRequestDto dto = gitApiClient.fetchPullRequestWithCommitsAndDiffs(owner, repo, prId);
-        // jiraService.enrichPullRequestWithJiraIssues(dto);
+    @Override
+    public void handlePullRequest(GithubWebhookModel model) throws JsonProcessingException {
+
         Outbox outbox = new Outbox();
-        fillOutbox(outbox, dto);
+        fillOutbox(outbox, model);
         outboxRepository.save(outbox);
     }
 
-    private void fillOutbox(Outbox outbox, PullRequestDto dto) throws JsonProcessingException {
-        outbox.setPayload(objectMapper.writeValueAsString(dto));
+    private void fillOutbox(Outbox outbox, GithubWebhookModel model) throws JsonProcessingException {
+        outbox.setPayload(objectMapper.writeValueAsString(model));
         outbox.setType(PullRequestDto.class.getTypeName());
         outbox.setAggregateType(PullRequestDto.class.getTypeName());
         outbox.setPublished(false);
-        outbox.setAggregateId(String.valueOf(dto.getId()));
+        outbox.setAggregateId(String.valueOf(UUID.randomUUID()));
     }
 }
