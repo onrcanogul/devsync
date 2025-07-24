@@ -1,6 +1,7 @@
 package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.dto.PullRequestDto;
+import com.devsync.gitservice.dto.model.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.KafkaGitProducerService;
@@ -29,7 +30,7 @@ public class OutboxPublisherServiceImpl implements OutboxPublisherService {
         List<Outbox> outboxes = outboxRepository.findByPublishedFalse();
         outboxes.forEach(outbox -> {
             try {
-                eventPublisher.sendPullRequest(objectMapper.readValue(outbox.getPayload(), PullRequestDto.class));
+                eventPublisher.sendPullRequest(objectMapper.readValue(outbox.getPayload(), GithubWebhookModel.class));
                 log.info("Event has been published");
                 outbox.setPublished(true);
                 outboxRepository.save(outbox);

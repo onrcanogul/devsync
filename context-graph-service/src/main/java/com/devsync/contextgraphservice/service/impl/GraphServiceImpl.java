@@ -8,9 +8,9 @@ import com.devsync.contextgraphservice.repository.PullRequestRepository;
 import com.devsync.contextgraphservice.service.GraphService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,15 +36,36 @@ public class GraphServiceImpl implements GraphService {
         return pullRequestRepository.save(pr);
     }
 
-    private void fillPrNode(PullRequestNode pr, PullRequestWithAnalysisDto model) {
-        pr.setId(model.getPullRequest().getId());
-        pr.setRepoId(model.getPullRequest().getBase().getRepo().getId());
-        pr.setRepoName(model.getPullRequest().getBase().getRepo().getName());
-        pr.setTitle(model.getPullRequest().getTitle());
-        pr.setBranch(model.getPullRequest().getBranch());
-        pr.setCommits(model.getPullRequest().getCommits().stream().map(c -> new CommitNode(c.getSha(), c.getMessage())).toList());
-        pr.setSolves(model.getPullRequest().getIssues().stream().map(i -> new IssueNode(generateRandomId() ,i.getSummary(), i.getKey())).toList());
-        setNodesAnalysis(pr, model);
+    private void fillPrNode(PullRequestNode pr, PullRequestWithAnalysisDto dto) {
+        pr.setId(System.currentTimeMillis());
+        pr.setRepoId(dto.getModel().getRepository().getId());
+        pr.setRepoName(dto.getModel().getRepository().getName());
+        String[] branchParts = dto.getModel().getRef().split("/");
+        String branch = branchParts[branchParts.length - 1];
+        pr.setBranch(branch);
+        pr.setPusher(dto.getModel().getPusher().getName());
+        if (dto.getModel().getHead_commit() != null) {
+            pr.setHeadCommitMessage(dto.getModel().getHead_commit().getMessage());
+            pr.setHeadCommitSha(dto.getModel().getHead_commit().getId());
+        }
+        pr.setCommitCount(dto.getModel().getCommits() != null ? dto.getModel().getCommits().size() : 0);
+        if (dto.getModel().getCommits() != null) {
+            pr.setCommits(
+                    dto.getModel().getCommits().stream()
+                            .map(c -> new CommitNode(c.getId(), c.getMessage()))
+                            .toList()
+            );
+        }
+        if (dto.getModel().getSender() != null) {
+            UserNode user = new UserNode();
+            user.setGithubId(dto.getModel().getSender().getId());
+            user.setUsername(dto.getModel().getSender().getLogin());
+            user.setAvatarUrl(dto.getModel().getSender().getAvatar_url());
+            user.setUserType(dto.getModel().getSender().getType());
+            pr.setCreatedBy(user);
+        }
+        pr.setSolves(new ArrayList<>());
+        setNodesAnalysis(pr, dto);
     }
 
     private void setNodesAnalysis(PullRequestNode pr, PullRequestWithAnalysisDto model) {
@@ -57,11 +78,9 @@ public class GraphServiceImpl implements GraphService {
         pullRequestAnalysisNode.setArchitecturalComment(analyzeDto.getArchitecturalComment());
         pullRequestAnalysisNode.setTechnicalComment(analyzeDto.getTechnicalComment());
         pr.setAnalysis(pullRequestAnalysisNode);
-
         Map<String, CommitAnalyzeDto> commitAnalysisMap = analyzeDto.getCommitAnalyses()
                 .stream()
                 .collect(Collectors.toMap(CommitAnalyzeDto::getHash, Function.identity()));
-
         pr.getCommits().forEach(commitNode -> {
             CommitAnalyzeDto analysis = commitAnalysisMap.get(commitNode.getHash());
             if (analysis != null) {
@@ -74,10 +93,6 @@ public class GraphServiceImpl implements GraphService {
                 commitNode.setAnalysis(commitAnalysisNode);
             }
         });
-    }
-
-    private long generateRandomId() {
-        return ThreadLocalRandom.current().nextLong(1_000_000_000L, 9_999_999_999L);
     }
 }
 
