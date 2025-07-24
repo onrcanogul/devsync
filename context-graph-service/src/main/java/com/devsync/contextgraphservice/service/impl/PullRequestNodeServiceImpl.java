@@ -5,7 +5,7 @@ import com.devsync.contextgraphservice.dto.event.PullRequestAnalyzeDto;
 import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.entity.*;
 import com.devsync.contextgraphservice.repository.PullRequestRepository;
-import com.devsync.contextgraphservice.service.GraphService;
+import com.devsync.contextgraphservice.service.PullRequestNodeService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,19 +15,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class GraphServiceImpl implements GraphService {
+public class PullRequestNodeServiceImpl implements PullRequestNodeService {
     private final PullRequestRepository pullRequestRepository;
 
-    public GraphServiceImpl(PullRequestRepository pullRequestRepository) {
+    public PullRequestNodeServiceImpl(PullRequestRepository pullRequestRepository) {
         this.pullRequestRepository = pullRequestRepository;
     }
 
     public List<PullRequestNode> get(Long repoId, String branch) {
-        return pullRequestRepository.findByRepoIdAndBranch(repoId, branch);
+        return pullRequestRepository.findByBranchAndRepository_Id(branch, repoId);
     }
 
     public List<PullRequestNode> get(Long repoId) {
-        return pullRequestRepository.findByRepoId(repoId);
+        return pullRequestRepository.findAllByRepositoryId(repoId);
     }
 
     public PullRequestNode saveFromPR(PullRequestWithAnalysisDto model) {
@@ -38,8 +38,6 @@ public class GraphServiceImpl implements GraphService {
 
     private void fillPrNode(PullRequestNode pr, PullRequestWithAnalysisDto dto) {
         pr.setId(System.currentTimeMillis());
-        pr.setRepoId(dto.getModel().getRepository().getId());
-        pr.setRepoName(dto.getModel().getRepository().getName());
         String[] branchParts = dto.getModel().getRef().split("/");
         String branch = branchParts[branchParts.length - 1];
         pr.setBranch(branch);
@@ -64,6 +62,19 @@ public class GraphServiceImpl implements GraphService {
             user.setUserType(dto.getModel().getSender().getType());
             pr.setCreatedBy(user);
         }
+
+        RepositoryNode repositoryNode = new RepositoryNode();
+        repositoryNode.setId(dto.getModel().getRepository().getId());
+        repositoryNode.setName(dto.getModel().getRepository().getName());
+        repositoryNode.setFullName(dto.getModel().getRepository().getFull_name());
+        repositoryNode.setHtmlUrl(dto.getModel().getRepository().getHtml_url());
+        repositoryNode.setVisibility(dto.getModel().getRepository().getVisibility());
+        repositoryNode.setLanguage(dto.getModel().getRepository().getLanguage());
+        repositoryNode.setDescription(dto.getModel().getRepository().getDescription());
+        repositoryNode.setDefaultBranch(dto.getModel().getRepository().getDefault_branch());
+        repositoryNode.setOwnerLogin(dto.getModel().getRepository().getName());
+        repositoryNode.setOwnerId(dto.getModel().getRepository().getId());
+        pr.setRepository(repositoryNode);
         pr.setSolves(new ArrayList<>());
         setNodesAnalysis(pr, dto);
     }

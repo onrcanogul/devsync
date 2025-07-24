@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface PullRequestRepository extends Neo4jRepository<PullRequestNode, Long> {
     List<PullRequestNode> findByBranch(String branch);
-    List<PullRequestNode> findByRepoId(Long repoId);
-    List<PullRequestNode> findByRepoIdAndBranch(Long repoId, String branch);
+    List<PullRequestNode> findAllByRepositoryId(Long repositoryId);
+    List<PullRequestNode> findByBranchAndRepository_Id(String branch, Long repository_id);
     @Query("MATCH (pr:PullRequest)-[:SOLVES]->(i:Issue) WHERE i.projectKey = $key RETURN pr")
     List<PullRequestNode> findByProjectKey(@Param("key") String key);
 }
