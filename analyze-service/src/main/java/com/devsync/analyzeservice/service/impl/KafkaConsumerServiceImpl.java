@@ -2,6 +2,7 @@ package com.devsync.analyzeservice.service.impl;
 
 import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
 import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
+import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.service.AnalyzeService;
 import com.devsync.analyzeservice.service.KafkaConsumerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,7 +25,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
         log.info("DLQ triggered: {}", message.toString());
     }
     @KafkaListener(topics = "pull-request-events", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
-    public void listen(PullRequestDto model) throws JsonProcessingException {
+    public void listen(GithubWebhookModel model) throws JsonProcessingException {
         log.info("Analyze consumer have been triggered:  {}", model.toString());
         analyzeService.createAnalyze(model);
     }

@@ -4,6 +4,7 @@ import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
 import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
 import com.devsync.analyzeservice.dto.model.ai.AnalyzeAIDto;
 import com.devsync.analyzeservice.dto.model.AnalyzeDto;
+import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.entity.Analyze;
 import com.devsync.analyzeservice.entity.CommitAnalyze;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;
@@ -63,8 +64,9 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         return analyzeMapper.toDto(analyze);
     }
 
+
     @Transactional
-    public AnalyzeDto createAnalyze(PullRequestDto model) throws JsonProcessingException {
+    public AnalyzeDto createAnalyze(GithubWebhookModel model) throws JsonProcessingException {
         PullRequestAnalyze analyze = customPullRequestAnalyzeMapper.mapFromDto(model);
         getAnalyzeFromAI(analyze, model);
         PullRequestAnalyze createdAnalyze = repository.save(analyze);
@@ -72,7 +74,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         return analyzeMapper.toDto(createdAnalyze);
     }
 
-    private void getAnalyzeFromAI(PullRequestAnalyze analyze, PullRequestDto model) throws JsonProcessingException {
+    private void getAnalyzeFromAI(PullRequestAnalyze analyze, GithubWebhookModel model) throws JsonProcessingException {
         AnalyzeAIDto analyzedPullRequest = pullRequestAnalyzerService.analyze(model);
         analyze.setTechnicalComment(analyzedPullRequest.getPullRequestAnalysis().getTechnicalComment());
         analyze.setFunctionalComment(analyzedPullRequest.getPullRequestAnalysis().getTechnicalComment());

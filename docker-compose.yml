@@ -86,7 +86,7 @@ services:
     restart: unless-stopped
     command: http host.docker.internal:8081
     environment:
-      - NGROK_AUTHTOKEN=30KZ1bnU9Blevf7lcCVtmpxKl6k_E7CnY6YZBmPaMDVTow19
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     ports:
       - "4040:4040"
 

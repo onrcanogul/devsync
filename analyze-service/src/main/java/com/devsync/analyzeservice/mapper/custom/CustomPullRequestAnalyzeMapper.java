@@ -1,26 +1,44 @@
 package com.devsync.analyzeservice.mapper.custom;
 
-import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
+import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;
-import com.devsync.analyzeservice.dto.event.git.ChangedFileDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
 public class CustomPullRequestAnalyzeMapper {
-    public PullRequestAnalyze mapFromDto(PullRequestDto dto) {
+
+    public PullRequestAnalyze mapFromDto(GithubWebhookModel dto) {
         PullRequestAnalyze analyze = new PullRequestAnalyze();
+
         analyze.setCommitCount(dto.getCommits().size());
-        analyze.setFileChangeCount(dto.getDiff().getChangedFiles().size());
+        analyze.setFileChangeCount(dto.getHead_commit().getModified().size());
         analyze.setAnalyzedAt(LocalDateTime.now());
-        analyze.setBranch(dto.getBranch());
-        analyze.setPullRequestId(dto.getId());
-        analyze.setAuthor(dto.getAuthor());
-        analyze.setRepoId(dto.getBase().getRepo().getId());
-        analyze.setRepoName(dto.getBase().getRepo().getName());
-        analyze.setTotalAdditions(dto.getDiff().getChangedFiles().stream().mapToInt(ChangedFileDto::getAdditions).sum());
-        analyze.setTotalDeletions(dto.getDiff().getChangedFiles().stream().mapToInt(ChangedFileDto::getDeletions).sum());
+
+        String[] refParts = dto.getRef().split("/");
+        String branchName = refParts[refParts.length - 1];
+        analyze.setBranch(branchName);
+
+        analyze.setPullRequestId(0);
+
+        analyze.setAuthor(dto.getHead_commit().getAuthor().getName());
+
+        analyze.setRepoId(dto.getRepository().getId());
+        analyze.setRepoName(dto.getRepository().getName());
+
+        int additions = dto.getCommits().stream()
+                .flatMap(commit -> commit.getModified().stream())
+                .mapToInt(file -> 1)
+                .sum();
+        analyze.setTotalAdditions(additions);
+
+        int deletions = dto.getCommits().stream()
+                .flatMap(commit -> commit.getRemoved().stream())
+                .mapToInt(file -> 1)
+                .sum();
+        analyze.setTotalDeletions(deletions);
         return analyze;
     }
+
 }
