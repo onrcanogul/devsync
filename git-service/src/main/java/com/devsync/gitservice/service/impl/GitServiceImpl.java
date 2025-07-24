@@ -27,8 +27,6 @@ public class GitServiceImpl implements GitService {
         this.outboxRepository = outboxRepository;
     }
 
-
-
     @Override
     public void handlePullRequest(GithubWebhookModel model) throws JsonProcessingException {
         Outbox outbox = new Outbox();
