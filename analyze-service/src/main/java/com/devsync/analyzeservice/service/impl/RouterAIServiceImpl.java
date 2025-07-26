@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
 @Service
-public class RouterAIServiceImpl implements AIService {
+public class RouterAIServiceImpl {
 
     private final OpenRouterConfigurations properties;
     private final WebClient client;
@@ -22,7 +22,6 @@ public class RouterAIServiceImpl implements AIService {
                 .build();
     }
 
-    @Override
     public String send(String llm, String prompt) {
         Map<String, Object> body = Map.of(
                 "model", properties.getModel(),

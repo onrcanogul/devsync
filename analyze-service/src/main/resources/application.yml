@@ -34,3 +34,6 @@ openrouter:
   token: ${SECONDARY_TOKEN}
   base-url: ${OPENAI_BASE_URL}
   model: ${OPENAI_MODEL}
+
+openai:
+  token: ${OPENAI_TOKEN}
