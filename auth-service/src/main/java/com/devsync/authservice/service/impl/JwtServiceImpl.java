@@ -14,6 +14,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.security.KeyRep.Type.SECRET;
+
 @Service
 public class JwtServiceImpl implements JwtService {
     @Value("${jwt.secret}")
@@ -28,6 +30,17 @@ public class JwtServiceImpl implements JwtService {
                 .collect(Collectors.toList()));
 
         return createToken(userDetails.getUsername(), claims);
+    }
+
+    public String generateToken(String username, String githubId, String email) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("githubId", githubId)
+                .claim("email", email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) //1 day
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
     }
 
     public String extractUsername(String token) {

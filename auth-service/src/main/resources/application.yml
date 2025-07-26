@@ -22,3 +22,9 @@ spring:
 
 jwt:
   secret: ZGV2c3luYy1zZWNyZXQta2V5LTEyMzQ1NnF3ZXJ0eXVp
+
+
+github:
+  client:
+    id: ${GITHUB_CLIENT_ID}
+    secret: ${GITHUB_CLIENT_SECRET}
