@@ -1,7 +1,6 @@
 package com.devsync.gitservice.service.impl;
 
-import com.devsync.gitservice.dto.PullRequestDto;
-import com.devsync.gitservice.dto.model.GithubWebhookModel;
+import com.devsync.gitservice.dto.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.KafkaGitProducerService;

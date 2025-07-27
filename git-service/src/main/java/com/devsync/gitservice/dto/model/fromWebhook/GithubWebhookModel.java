@@ -1,4 +1,4 @@
-package com.devsync.gitservice.dto.model;
+package com.devsync.gitservice.dto.model.fromWebhook;
 
 
 import lombok.Data;
