@@ -1,11 +1,9 @@
-package com.devsync.gitservice.dto.model;
+package com.devsync.gitservice.dto.model.fromWebhook;
 
 import lombok.Data;
 
 @Data
-public class Owner {
-    private String name;
-    private String email;
+public class Sender {
     private String login;
     private long id;
     private String node_id;

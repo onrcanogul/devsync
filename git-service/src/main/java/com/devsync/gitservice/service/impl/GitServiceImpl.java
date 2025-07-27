@@ -2,7 +2,8 @@ package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
 import com.devsync.gitservice.dto.PullRequestDto;
-import com.devsync.gitservice.dto.model.GithubWebhookModel;
+import com.devsync.gitservice.dto.model.fromApi.RepositoryFromApi;
+import com.devsync.gitservice.dto.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.GitService;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,6 +35,11 @@ public class GitServiceImpl implements GitService {
         Outbox outbox = new Outbox();
         fillOutbox(outbox, model);
         outboxRepository.save(outbox);
+    }
+
+    @Override
+    public List<RepositoryFromApi> getRepositories(String username) {
+        return gitApiClient.getUsersRepositories(username);
     }
 
     private void fillOutbox(Outbox outbox, GithubWebhookModel model) throws JsonProcessingException {
