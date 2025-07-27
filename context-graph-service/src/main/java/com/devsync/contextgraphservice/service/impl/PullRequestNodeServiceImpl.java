@@ -1,8 +1,8 @@
 package com.devsync.contextgraphservice.service.impl;
 
-import com.devsync.contextgraphservice.dto.event.CommitAnalyzeDto;
-import com.devsync.contextgraphservice.dto.event.PullRequestAnalyzeDto;
-import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.contextgraphservice.model.event.CommitAnalyzeDto;
+import com.devsync.contextgraphservice.model.event.PullRequestAnalyzeDto;
+import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.entity.*;
 import com.devsync.contextgraphservice.repository.PullRequestRepository;
 import com.devsync.contextgraphservice.service.PullRequestNodeService;

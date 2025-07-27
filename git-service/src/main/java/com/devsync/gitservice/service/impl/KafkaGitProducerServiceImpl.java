@@ -1,6 +1,6 @@
 package com.devsync.gitservice.service.impl;
 
-import com.devsync.gitservice.dto.model.fromWebhook.GithubWebhookModel;
+import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.service.KafkaGitProducerService;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

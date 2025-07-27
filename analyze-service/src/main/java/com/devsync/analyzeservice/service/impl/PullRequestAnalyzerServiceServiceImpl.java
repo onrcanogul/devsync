@@ -1,8 +1,8 @@
 package com.devsync.analyzeservice.service.impl;
 
 import com.devsync.analyzeservice.constant.Prompts;
-import com.devsync.analyzeservice.dto.model.ai.AnalyzeAIDto;
-import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
+import com.devsync.analyzeservice.model.model.ai.AnalyzeAIDto;
+import com.devsync.analyzeservice.model.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.service.AIService;
 import com.devsync.analyzeservice.service.PullRequestAnalyzerService;
 import com.fasterxml.jackson.core.JsonProcessingException;

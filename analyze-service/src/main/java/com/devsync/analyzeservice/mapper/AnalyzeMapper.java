@@ -1,7 +1,7 @@
 package com.devsync.analyzeservice.mapper;
 
 
-import com.devsync.analyzeservice.dto.model.AnalyzeDto;
+import com.devsync.analyzeservice.model.model.AnalyzeDto;
 import com.devsync.analyzeservice.entity.Analyze;
 import org.mapstruct.Mapper;
 

@@ -1,13 +1,11 @@
 package com.devsync.gitservice.client;
 
 import com.devsync.gitservice.configuration.GitHubProperties;
-import com.devsync.gitservice.dto.model.fromApi.RepositoryFromApi;
-import org.springframework.core.ParameterizedTypeReference;
+import com.devsync.gitservice.model.fromApi.RepositoryFromApi;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class GitApiClient {

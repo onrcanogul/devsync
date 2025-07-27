@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.mapper.custom;
 
-import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
+import com.devsync.analyzeservice.model.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;
 import org.springframework.stereotype.Component;
 

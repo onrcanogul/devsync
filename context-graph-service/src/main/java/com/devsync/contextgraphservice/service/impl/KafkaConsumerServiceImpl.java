@@ -1,6 +1,6 @@
 package com.devsync.contextgraphservice.service.impl;
 
-import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.service.PullRequestNodeService;
 import com.devsync.contextgraphservice.service.KafkaConsumerService;
 import lombok.extern.slf4j.Slf4j;

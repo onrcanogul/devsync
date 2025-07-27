@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.configuration;
 
-import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
+import com.devsync.analyzeservice.model.viewmodel.GithubWebhookModel;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;

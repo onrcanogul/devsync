@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.mapper;
 
-import com.devsync.analyzeservice.dto.model.PullRequestAnalyzeDto;
+import com.devsync.analyzeservice.model.model.PullRequestAnalyzeDto;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;
 import org.mapstruct.Mapper;
 

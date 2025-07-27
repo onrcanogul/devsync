@@ -1,10 +1,9 @@
 package com.devsync.analyzeservice.service.impl;
 
-import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
-import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
-import com.devsync.analyzeservice.dto.model.ai.AnalyzeAIDto;
-import com.devsync.analyzeservice.dto.model.AnalyzeDto;
-import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
+import com.devsync.analyzeservice.model.event.PullRequestWithAnalysisDto;
+import com.devsync.analyzeservice.model.model.ai.AnalyzeAIDto;
+import com.devsync.analyzeservice.model.model.AnalyzeDto;
+import com.devsync.analyzeservice.model.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.entity.Analyze;
 import com.devsync.analyzeservice.entity.CommitAnalyze;
 import com.devsync.analyzeservice.entity.PullRequestAnalyze;

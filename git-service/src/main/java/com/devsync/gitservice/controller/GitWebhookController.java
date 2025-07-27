@@ -1,6 +1,6 @@
 package com.devsync.gitservice.controller;
 
-import com.devsync.gitservice.dto.model.fromWebhook.GithubWebhookModel;
+import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.service.impl.GitServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
