@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.service.impl;
 
-import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.analyzeservice.model.event.PullRequestWithAnalysisDto;
 import com.devsync.analyzeservice.service.KafkaProducerService;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

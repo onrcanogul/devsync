@@ -1,6 +1,6 @@
 package com.devsync.contextgraphservice.configuration;
 
-import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;

@@ -1,6 +1,6 @@
 package com.devsync.analyzeservice.controller;
 
-import com.devsync.analyzeservice.dto.model.AnalyzeDto;
+import com.devsync.analyzeservice.model.model.AnalyzeDto;
 import com.devsync.analyzeservice.service.AnalyzeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

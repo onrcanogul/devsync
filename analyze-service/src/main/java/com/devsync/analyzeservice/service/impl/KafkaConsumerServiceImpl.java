@@ -1,8 +1,7 @@
 package com.devsync.analyzeservice.service.impl;
 
-import com.devsync.analyzeservice.dto.event.PullRequestWithAnalysisDto;
-import com.devsync.analyzeservice.dto.event.git.PullRequestDto;
-import com.devsync.analyzeservice.dto.viewmodel.GithubWebhookModel;
+import com.devsync.analyzeservice.model.event.PullRequestWithAnalysisDto;
+import com.devsync.analyzeservice.model.viewmodel.GithubWebhookModel;
 import com.devsync.analyzeservice.service.AnalyzeService;
 import com.devsync.analyzeservice.service.KafkaConsumerService;
 import com.fasterxml.jackson.core.JsonProcessingException;

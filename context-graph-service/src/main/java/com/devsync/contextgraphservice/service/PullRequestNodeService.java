@@ -1,7 +1,7 @@
 package com.devsync.contextgraphservice.service;
 
 
-import com.devsync.contextgraphservice.dto.event.PullRequestWithAnalysisDto;
+import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.entity.PullRequestNode;
 
 import java.util.List;
