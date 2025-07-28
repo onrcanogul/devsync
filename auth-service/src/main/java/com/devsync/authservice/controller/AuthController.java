@@ -53,9 +53,16 @@ public class AuthController {
         String username = userInfo.get("login").toString();
         String email = userInfo.get("email") != null ? userInfo.get("email").toString() : username + "@github.com";
 
+        gitHubOAuthService.saveGithubToken(username, accessToken, code);
+
         String jwt = jwtService.generateToken(username, githubId, email);
 
         return ResponseEntity.ok(Map.of("token", jwt));
+    }
+
+    @PostMapping("/github/token/{username}")
+    public String getGitHubAccessToken(@PathVariable String username) {
+        return gitHubOAuthService.getGithubAccessToken(username);
     }
 
 
