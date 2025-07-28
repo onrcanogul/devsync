@@ -2,9 +2,12 @@ package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
 import com.devsync.gitservice.client.feign.AuthServiceClient;
+import com.devsync.gitservice.factory.OutboxFactory;
+import com.devsync.gitservice.model.event.CreateRepositoryModel;
 import com.devsync.gitservice.model.fromApi.RepositoryFromApi;
 import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
+import com.devsync.gitservice.model.fromWebhook.Repository;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.GitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,21 +24,20 @@ import java.util.UUID;
 @Service
 public class GitServiceImpl implements GitService {
     private final GitApiClient gitApiClient;
-    private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
     private final AuthServiceClient authServiceClient;
+    private final OutboxFactory outboxFactory;
 
-    public GitServiceImpl(GitApiClient gitApiClient, ObjectMapper objectMapper, OutboxRepository outboxRepository, AuthServiceClient authServiceClient) {
+    public GitServiceImpl(GitApiClient gitApiClient, OutboxRepository outboxRepository, AuthServiceClient authServiceClient, OutboxFactory outboxFactory) {
         this.gitApiClient = gitApiClient;
-        this.objectMapper = objectMapper;
         this.outboxRepository = outboxRepository;
         this.authServiceClient = authServiceClient;
+        this.outboxFactory = outboxFactory;
     }
 
     @Override
-    public void handlePullRequest(GithubWebhookModel model) throws JsonProcessingException {
-        Outbox outbox = new Outbox();
-        fillOutbox(outbox, model);
+    public void handlePullRequest(GithubWebhookModel model) {
+        Outbox outbox = outboxFactory.create(model, GithubWebhookModel.class, GithubWebhookModel.class, UUID.randomUUID().toString());
         outboxRepository.save(outbox);
     }
 
@@ -52,7 +54,7 @@ public class GitServiceImpl implements GitService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> config = new HashMap<>();
-        config.put("url", "https://98bd36642e37.ngrok-free.app/api/git/webhook/pull-request");
+        config.put("url", "https://98bd36642e37.ngrok-free.app/api/git/webhook/pull-request"); //will come from discovery
         config.put("content_type", "json");
         config.put("insecure_ssl", "0");
 
@@ -61,14 +63,17 @@ public class GitServiceImpl implements GitService {
         requestBody.put("active", true);
         requestBody.put("events", List.of("push"));
         requestBody.put("config", config);
-        gitApiClient.addWebhook(owner, repo, requestBody, headers);
+        String response = gitApiClient.addWebhook(owner, repo, requestBody, headers);
+        if (!response.isEmpty()) {
+            createCreateRepositoryOutbox(githubAccessToken, owner, repo);
+        }
     }
 
-    private void fillOutbox(Outbox outbox, GithubWebhookModel model) throws JsonProcessingException {
-        outbox.setPayload(objectMapper.writeValueAsString(model));
-        outbox.setType(GithubWebhookModel.class.getTypeName());
-        outbox.setAggregateType(GithubWebhookModel.class.getTypeName());
-        outbox.setPublished(false);
-        outbox.setAggregateId(String.valueOf(UUID.randomUUID()));
+    private void createCreateRepositoryOutbox(String githubAccessToken, String owner, String repo) {
+        Repository repository = gitApiClient.getRepositoryDetails(githubAccessToken, owner, repo);
+        CreateRepositoryModel createRepositoryModel = new CreateRepositoryModel(repository);
+        Outbox outbox = outboxFactory.create(createRepositoryModel, CreateRepositoryModel.class, CreateRepositoryModel.class, repository.getNode_id());
+        outboxRepository.save(outbox);
     }
+
 }

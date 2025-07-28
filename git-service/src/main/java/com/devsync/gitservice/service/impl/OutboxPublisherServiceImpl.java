@@ -1,5 +1,6 @@
 package com.devsync.gitservice.service.impl;
 
+import com.devsync.gitservice.model.event.CreateRepositoryModel;
 import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
 import com.devsync.gitservice.repository.OutboxRepository;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -29,11 +31,15 @@ public class OutboxPublisherServiceImpl implements OutboxPublisherService {
         List<Outbox> outboxes = outboxRepository.findByPublishedFalse();
         outboxes.forEach(outbox -> {
             try {
-                eventPublisher.sendPullRequest(objectMapper.readValue(outbox.getPayload(), GithubWebhookModel.class));
-                log.info("Event has been published");
+                String aggregateType = outbox.getAggregateType();
+                if(aggregateType.equals(GithubWebhookModel.class.getName())) {
+                    eventPublisher.sendPullRequest(objectMapper.readValue(outbox.getPayload(), GithubWebhookModel.class));
+                }
+                else if(aggregateType.equals(CreateRepositoryModel.class.getName())) {
+                    eventPublisher.sendCreateRepository(objectMapper.readValue(outbox.getPayload(), CreateRepositoryModel.class));
+                }
                 outbox.setPublished(true);
                 outboxRepository.save(outbox);
-                log.info("Outbox has been published");
             }
             catch (Exception e) {
                 log.error("Error while publishing outbox events: {}", e.getMessage());
