@@ -1,7 +1,9 @@
 package com.devsync.gitservice.client;
 
 import com.devsync.gitservice.configuration.GitHubProperties;
+import com.devsync.gitservice.model.event.CreateRepositoryModel;
 import com.devsync.gitservice.model.fromApi.RepositoryFromApi;
+import com.devsync.gitservice.model.fromWebhook.Repository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,19 @@ public class GitApiClient {
                 .retrieve()
                 .bodyToFlux(RepositoryFromApi.class)
                 .collectList()
+                .block();
+    }
+
+    public Repository getRepositoryDetails(String accessToken, String owner, String repo) {
+        String url = String.format("https://api.github.com/repos/%s/%s", owner, repo);
+
+        WebClient webClient = WebClient.builder().build();
+
+        return webClient.get()
+                .uri(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(Repository.class)
                 .block();
     }
 
