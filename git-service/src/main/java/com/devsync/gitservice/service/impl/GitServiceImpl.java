@@ -1,6 +1,7 @@
 package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
+import com.devsync.gitservice.client.feign.AuthServiceClient;
 import com.devsync.gitservice.model.fromApi.RepositoryFromApi;
 import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
@@ -8,9 +9,13 @@ import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.GitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -18,11 +23,13 @@ public class GitServiceImpl implements GitService {
     private final GitApiClient gitApiClient;
     private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
+    private final AuthServiceClient authServiceClient;
 
-    public GitServiceImpl(GitApiClient gitApiClient, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
+    public GitServiceImpl(GitApiClient gitApiClient, ObjectMapper objectMapper, OutboxRepository outboxRepository, AuthServiceClient authServiceClient) {
         this.gitApiClient = gitApiClient;
         this.objectMapper = objectMapper;
         this.outboxRepository = outboxRepository;
+        this.authServiceClient = authServiceClient;
     }
 
     @Override
@@ -35,6 +42,26 @@ public class GitServiceImpl implements GitService {
     @Override
     public List<RepositoryFromApi> getRepositories(String username) {
         return gitApiClient.getUsersRepositories(username);
+    }
+
+    @Override
+    public void addWebhook(String accessToken, String owner, String repo) {
+        HttpHeaders headers = new HttpHeaders();
+        String githubAccessToken = authServiceClient.getGitHubAccessToken(owner); //will get from token
+        headers.setBearerAuth(githubAccessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> config = new HashMap<>();
+        config.put("url", "https://98bd36642e37.ngrok-free.app/api/git/webhook/pull-request");
+        config.put("content_type", "json");
+        config.put("insecure_ssl", "0");
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("name", "web");
+        requestBody.put("active", true);
+        requestBody.put("events", List.of("push"));
+        requestBody.put("config", config);
+        gitApiClient.addWebhook(owner, repo, requestBody, headers);
     }
 
     private void fillOutbox(Outbox outbox, GithubWebhookModel model) throws JsonProcessingException {

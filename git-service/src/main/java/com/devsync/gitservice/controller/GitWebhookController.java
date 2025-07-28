@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
@@ -25,6 +24,12 @@ public class GitWebhookController {
     public ResponseEntity<Void> handleWebhook(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
         GithubWebhookModel model = objectMapper.convertValue(payload, GithubWebhookModel.class);
         gitService.handlePullRequest(model);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/add-webhook")
+    public ResponseEntity<Void> addWebhook(@RequestParam String accessToken, @RequestParam String owner, @RequestParam String repo) {
+        gitService.addWebhook(accessToken, owner, repo);
         return ResponseEntity.ok().build();
     }
 }
