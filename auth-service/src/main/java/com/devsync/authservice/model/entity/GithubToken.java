@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -21,4 +22,5 @@ public class GithubToken {
     private String code;
     private String token;
     private String username;
+    private LocalDateTime createdDate;
 }

@@ -2,16 +2,13 @@ package com.devsync.gitservice.service.impl;
 
 import com.devsync.gitservice.client.GitApiClient;
 import com.devsync.gitservice.client.feign.AuthServiceClient;
+import com.devsync.gitservice.constant.AppConstants;
 import com.devsync.gitservice.factory.OutboxFactory;
-import com.devsync.gitservice.model.event.CreateRepositoryModel;
 import com.devsync.gitservice.model.fromApi.RepositoryFromApi;
 import com.devsync.gitservice.model.fromWebhook.GithubWebhookModel;
 import com.devsync.gitservice.entity.Outbox;
-import com.devsync.gitservice.model.fromWebhook.Repository;
 import com.devsync.gitservice.repository.OutboxRepository;
 import com.devsync.gitservice.service.GitService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -43,18 +40,19 @@ public class GitServiceImpl implements GitService {
 
     @Override
     public List<RepositoryFromApi> getRepositories(String username) {
-        return gitApiClient.getUsersRepositories(username);
+        String githubAccessToken = authServiceClient.getGitHubAccessToken(username);
+        return gitApiClient.getUsersRepositories(username, githubAccessToken, AppConstants.webhookUrl);
     }
 
     @Override
     public void addWebhook(String accessToken, String owner, String repo) {
         HttpHeaders headers = new HttpHeaders();
-        String githubAccessToken = authServiceClient.getGitHubAccessToken(owner); //will get from token
+        String githubAccessToken = authServiceClient.getGitHubAccessToken(owner);
         headers.setBearerAuth(githubAccessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> config = new HashMap<>();
-        config.put("url", "https://98bd36642e37.ngrok-free.app/api/git/webhook/pull-request"); //will come from discovery
+        config.put("url", AppConstants.webhookUrl);
         config.put("content_type", "json");
         config.put("insecure_ssl", "0");
 
@@ -63,17 +61,6 @@ public class GitServiceImpl implements GitService {
         requestBody.put("active", true);
         requestBody.put("events", List.of("push"));
         requestBody.put("config", config);
-        String response = gitApiClient.addWebhook(owner, repo, requestBody, headers);
-        if (!response.isEmpty()) {
-            createCreateRepositoryOutbox(githubAccessToken, owner, repo);
-        }
+        gitApiClient.addWebhook(owner, repo, requestBody, headers);
     }
-
-    private void createCreateRepositoryOutbox(String githubAccessToken, String owner, String repo) {
-        Repository repository = gitApiClient.getRepositoryDetails(githubAccessToken, owner, repo);
-        CreateRepositoryModel createRepositoryModel = new CreateRepositoryModel(repository);
-        Outbox outbox = outboxFactory.create(createRepositoryModel, CreateRepositoryModel.class, CreateRepositoryModel.class, repository.getNode_id());
-        outboxRepository.save(outbox);
-    }
-
 }

@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +31,11 @@ public class GitHubOAuthServiceImpl implements GitHubOAuthService {
     }
 
     public String getAccessToken(String code) {
-        String url = "https://github.com/login/oauth/access_token";
-
+        HttpHeaders headers = new HttpHeaders();
         RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
+        String url = "https://github.com/login/oauth/access_token";
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-
         HashMap<String, String> body = new HashMap<>();
         body.put("client_id", clientId);
         body.put("client_secret", clientSecret);
@@ -74,10 +73,13 @@ public class GitHubOAuthServiceImpl implements GitHubOAuthService {
             token.setToken(accessToken);
             githubTokenRepository.save(token);
         }
-        GithubToken newGithubToken = new GithubToken();
-        newGithubToken.setCode(code);
-        newGithubToken.setUsername(username);
-        newGithubToken.setToken(accessToken);
-        githubTokenRepository.save(newGithubToken);
+        else {
+            GithubToken newGithubToken = new GithubToken();
+            newGithubToken.setCode(code);
+            newGithubToken.setUsername(username);
+            newGithubToken.setToken(accessToken);
+            newGithubToken.setCreatedDate(LocalDateTime.now());
+            githubTokenRepository.save(newGithubToken);
+        }
     }
 }

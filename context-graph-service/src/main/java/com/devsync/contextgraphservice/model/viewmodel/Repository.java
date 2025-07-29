@@ -3,8 +3,10 @@ package com.devsync.contextgraphservice.model.viewmodel;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Repository {
+public class Repository implements Serializable {
     private long id;
     private String node_id;
     private String name;
@@ -51,9 +53,9 @@ public class Repository {
     private String labels_url;
     private String releases_url;
     private String deployments_url;
-    private long created_at;
+    private String created_at;
     private String updated_at;
-    private long pushed_at;
+    private String pushed_at;
     private String git_url;
     private String ssh_url;
     private String clone_url;
