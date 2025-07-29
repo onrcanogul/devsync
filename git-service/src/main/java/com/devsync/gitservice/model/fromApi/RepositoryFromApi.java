@@ -78,5 +78,6 @@ public class RepositoryFromApi {
     private int stargazers;
     @JsonProperty("master_branch")
     private String masterBranch;
+    private boolean hasTargetWebhook;
 }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/git")
+@RequestMapping("/api/git-webhook")
 public class GitWebhookController {
 
     private final ObjectMapper objectMapper;

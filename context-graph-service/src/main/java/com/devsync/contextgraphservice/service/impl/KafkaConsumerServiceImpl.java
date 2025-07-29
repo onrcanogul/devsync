@@ -23,7 +23,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
     @KafkaListener(topics = "analyze-events", groupId = "my-group", containerFactory = "kafkaListenerContainerFactory")
     public void listen(PullRequestWithAnalysisDto event) {
-        log.info("Context Graph Consumer was triggered: {}", event.toString());
+        log.info("Context Graph Analyze Event Consumer was triggered: {}", event.toString());
         pullRequestNodeService.saveFromPR(event);
     }
 }

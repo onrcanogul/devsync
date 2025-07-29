@@ -1,5 +1,6 @@
 package com.devsync.contextgraphservice.configuration;
 
+import com.devsync.contextgraphservice.model.event.CreateRepositoryModel;
 import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
@@ -15,6 +16,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -38,6 +40,20 @@ public class KafkaConsumerConfig {
         );
     }
     @Bean
+    public ConsumerFactory<String, CreateRepositoryModel> createRepositoryConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "my-repo-group");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+
+        return new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                new JsonDeserializer<>(CreateRepositoryModel.class, false)
+        );
+    }
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PullRequestWithAnalysisDto> kafkaListenerContainerFactory(
             ConsumerFactory<String, PullRequestWithAnalysisDto> consumerFactory,
             DefaultErrorHandler errorHandler
@@ -47,6 +63,14 @@ public class KafkaConsumerConfig {
 
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(errorHandler);
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, CreateRepositoryModel> createRepositoryKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CreateRepositoryModel> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(createRepositoryConsumerFactory());
         return factory;
     }
 
