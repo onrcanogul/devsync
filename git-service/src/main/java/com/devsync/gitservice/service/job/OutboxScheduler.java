@@ -14,6 +14,6 @@ public class OutboxScheduler {
 
     @Scheduled(fixedRate = 5000)
     public void publishPullRequestCreatedEvent() {
-        outboxPublisherServiceImpl.publishOrderCreatedEvent();
+        outboxPublisherServiceImpl.publishEvent();
     }
 }

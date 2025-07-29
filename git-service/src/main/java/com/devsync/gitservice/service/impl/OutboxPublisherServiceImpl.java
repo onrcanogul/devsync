@@ -25,8 +25,8 @@ public class OutboxPublisherServiceImpl implements OutboxPublisherService {
         this.objectMapper = objectMapper;
     }
 
-    public void publishOrderCreatedEvent() {
-        log.info("Publishing order created event job was triggered");
+    public void publishEvent() {
+        log.info("Publishing event job was triggered");
         List<Outbox> outboxes = outboxRepository.findByPublishedFalse();
         outboxes.forEach(outbox -> {
             try {
