@@ -16,6 +16,7 @@ public class RepositoryNodeServiceImpl implements RepositoryNodeService {
         this.repoRepository = repoRepository;
     }
 
+    @Override
     public List<RepositoryNode> getByUser(String username) {
         return repoRepository.findByOwnerLogin(username);
     }

@@ -43,6 +43,7 @@ public class PullRequestNodeServiceImpl implements PullRequestNodeService {
         return pullRequestRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    @Override
     public PullRequestNode saveFromPR(PullRequestWithAnalysisDto model) {
         PullRequestNode pr = new PullRequestNode();
         fillPrNode(pr, model);
