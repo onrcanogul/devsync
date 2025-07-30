@@ -27,14 +27,24 @@ public class GraphController {
         this.repositoryNodeService = repositoryNodeService;
     }
 
+    @GetMapping("pull-request/{id}")
+    public ResponseEntity<PullRequestNode> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(pullRequestNodeService.getById(id));
+    }
+
     @GetMapping("repo/{username}")
     public ResponseEntity<List<RepositoryNode>> getRepositoriesByUser(@PathVariable String username) {
         return ResponseEntity.ok(repositoryNodeService.getByUser(username));
     }
 
-    @GetMapping("{repoId}/{branch}")
+    @GetMapping("repo/{repoId}/{branch}")
     public ResponseEntity<List<PullRequestNode>> get(@PathVariable String branch, @PathVariable Long repoId) {
         return ResponseEntity.ok(pullRequestNodeService.get(repoId, branch));
+    }
+
+    @GetMapping("user/{username}")
+    public ResponseEntity<List<PullRequestNode>> getByUser(@PathVariable String username) {
+        return ResponseEntity.ok(pullRequestNodeService.getByUser(username));
     }
 
     @GetMapping("{repoId}")

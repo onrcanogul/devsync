@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CommitNodeService {
     List<CommitNode> get();
+    CommitNode getByHash(String hash);
 }

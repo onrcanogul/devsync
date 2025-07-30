@@ -6,6 +6,7 @@ import com.devsync.contextgraphservice.model.event.PullRequestWithAnalysisDto;
 import com.devsync.contextgraphservice.entity.*;
 import com.devsync.contextgraphservice.repository.PullRequestRepository;
 import com.devsync.contextgraphservice.service.PullRequestNodeService;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,12 +23,24 @@ public class PullRequestNodeServiceImpl implements PullRequestNodeService {
         this.pullRequestRepository = pullRequestRepository;
     }
 
+    @Override
     public List<PullRequestNode> get(Long repoId, String branch) {
         return pullRequestRepository.findByBranchAndRepository_Id(branch, repoId);
     }
 
+    @Override
+    public List<PullRequestNode> getByUser(String username) {
+        return pullRequestRepository.findByRepository_OwnerLogin(username);
+    }
+
+    @Override
     public List<PullRequestNode> get(Long repoId) {
         return pullRequestRepository.findAllByRepositoryId(repoId);
+    }
+
+    @Override
+    public PullRequestNode getById(Long id) {
+        return pullRequestRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     public PullRequestNode saveFromPR(PullRequestWithAnalysisDto model) {

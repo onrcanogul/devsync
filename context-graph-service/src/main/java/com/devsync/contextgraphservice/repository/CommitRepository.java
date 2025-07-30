@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommitRepository extends Neo4jRepository<CommitNode, String> {
-
+    CommitNode findByHash(String hash);
 }

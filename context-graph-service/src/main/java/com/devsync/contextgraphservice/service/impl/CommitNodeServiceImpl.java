@@ -17,7 +17,13 @@ public class CommitNodeServiceImpl implements CommitNodeService {
         this.commitRepository = commitRepository;
     }
 
+    @Override
     public List<CommitNode> get() {
         return commitRepository.findAll();
+    }
+
+    @Override
+    public CommitNode getByHash(String hash) {
+        return commitRepository.findByHash(hash);
     }
 }
