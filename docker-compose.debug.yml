@@ -1,0 +1,27 @@
+services:
+  git-service:
+    ports:
+      - "5006:5005"
+
+  analyze-service:
+    ports:
+      - "5005:5005"
+
+  context-graph-service:
+    ports:
+      - "5010:5005"
+
+  auth-service:
+    ports:
+      - "5007:5005"
+
+  api-gateway:
+    ports:
+      - "5100:5005"
+
+  eureka-server:
+    ports:
+      - "5200:5005"
+
+
+#  docker compose -f docker-compose.yml -f docker-compose.debug.yml up

@@ -2,7 +2,7 @@ spring:
   application:
     name: git-service
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: git-service-group
       auto-offset-reset: earliest
@@ -14,9 +14,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
-      url: jdbc:postgresql://localhost:5433/git-db
-      username: postgres
-      password: postgres
+    url: jdbc:postgresql://git-db:5432/git-db
+    username: postgres
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,13 +25,15 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 github:
   token: ${GITHUB_TOKEN}
+
 jira:
   base-url: 123
   token: 123
   username: 123
+
 server:
-  port: 8081
+  port: 8080

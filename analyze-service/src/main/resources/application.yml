@@ -5,7 +5,7 @@ spring:
   application:
     name: analyze-service
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: my-group
       auto-offset-reset: earliest
@@ -20,16 +20,18 @@ spring:
   eureka:
     client:
       service-url:
-        defaultZone: http://localhost:8761/eureka
+        defaultZone: http://eureka-server:8761/eureka
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/analyze-db
+    url: jdbc:postgresql://analyze-db:5432/analyze-db   # DB service name
     username: postgres
     password: postgres
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  # Dialect eklendi
+
 openrouter:
   token: ${SECONDARY_TOKEN}
   base-url: ${OPENAI_BASE_URL}
