@@ -26,3 +26,13 @@ github:
   client:
     id: ${GITHUB_CLIENT_ID}
     secret: ${GITHUB_CLIENT_SECRET}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

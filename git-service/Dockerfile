@@ -9,6 +9,8 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:23-jre
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Debug toggle (profile ile açabilirsin)
 ARG ENABLE_DEBUG=false
 ENV JAVA_TOOL_OPTIONS=""
