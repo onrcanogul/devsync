@@ -36,12 +36,15 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - example-net
     healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list" ]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -148,6 +151,8 @@ services:
     depends_on:
       git-db:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - example-net
     environment:
@@ -164,6 +169,8 @@ services:
       - "8080:8080"
     depends_on:
       analyze-db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     networks:
       - example-net
@@ -184,6 +191,8 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - example-net
     healthcheck:
@@ -198,6 +207,8 @@ services:
       - "8082:8080"
     depends_on:
       user-db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     environment:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
